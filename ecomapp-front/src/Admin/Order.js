@@ -21,6 +21,7 @@ const Orders = () => {
     }
     useEffect(()=>{
         loadOrders()
+        loadStatusValues();
     }, [])
 
     const loadStatusValues = () => {
@@ -69,6 +70,7 @@ const Orders = () => {
     const showStatus = o => (
         <div className="form-group">
             <h3 className="mark mb-4">Status: {o.status}</h3>
+           
             <select
                 className="form-control"
                 onChange={e => handleStatusChange(e, o._id)}

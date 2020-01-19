@@ -9,11 +9,13 @@ import AdminRoute from './auth/AdminRoute'
 import AdminDashboard from './user/AdminDashboard'
 import AddCategory from './Admin/AddCategory'
 import AddProduct from './Admin/AddProduct'
+import UpdateProduct from './Admin/UpdateProduct'
 import Shop from './core/Shop'
 import Product from './core/Product'
 import Cart from './core/Cart'
 import Orders from './Admin/Order'
-
+import Profile from './user/Profile';
+import ManageProduct from './Admin/ManageProduct';
 const Routes = () => {
     return (
         <BrowserRouter>
@@ -51,6 +53,22 @@ const Routes = () => {
                     exact
                     component={Orders}
                  />  
+                 <PrivateRoute 
+                    path="/profile/:userId" 
+                    exact 
+                    component={Profile} 
+                />
+                <AdminRoute 
+                    path="/admin/products"
+                    exact
+                    component={ManageProduct}
+                 /> 
+                 <AdminRoute 
+                    path="/admin/product/update/:productId"
+                    exact
+                    component={UpdateProduct}
+                 /> 
+                 
             </Switch>
 
         </BrowserRouter>

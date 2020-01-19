@@ -14,6 +14,7 @@ const Signup = () => {
     const {name,email,password,success,error} = values;
     
     const handleChange = name => event=>{
+        console.log('sssschecking value ',name);
         setValues({...values, error:false, [name]:event.target.value })
     }
     const clickSubmit = event => {

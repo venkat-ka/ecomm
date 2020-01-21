@@ -4,12 +4,15 @@ const _ = require('lodash');
 const fs = require('fs');
 const {errorHandler} = require('../helpers/dbErrorHandler');
 exports.productById = (req,res,next,id)=>{
+    
    Product.findById(id)
     .populate("category")
     .exec((err,product)=>{
+       
        if(err||!product){
-           return res.status(400).json({message:"Middleware validation Product Not Found"});
+           return res.status(400).json({error:"Middleware validation Product Not Found"});
        }
+      
        req.product = product
        next()
    })
@@ -20,7 +23,7 @@ exports.create = (req, res)=>{
     form.parse(req,(err,fields,files)=>{
         if(err){
             return res.status(400).json({
-                err: "Image Could Not Uploaded"
+                error: "Image Could Not Uploaded"
             })
         }
         const {name, description,price,category,quantity,shipping} = fields
@@ -61,7 +64,7 @@ exports.remove = (req,res)=>{
     let product = req.product;
     product.remove((err,deletedProduct)=>{
         if(err){
-            return res.status(400).json({err:errorHandler(err)})
+            return res.status(400).json({error:errorHandler(err)})
         }
         res.json({
             message:"Produt deleted successfully"
@@ -70,19 +73,20 @@ exports.remove = (req,res)=>{
 }
 
 exports.update = (req, res)=>{
+    
     let form  = new formidable.IncomingForm();
     form.keepExtensions = true;
     form.parse(req,(err,fields,files)=>{
         if(err){
             return res.status(400).json({
-                err: "Image Could Not Uploaded"
+                error: "Image Could Not Uploaded"
             })
         }
         const {name, description,price,category,quantity,shipping} = fields
 
-        if(!name || !description || !price || !category || !quantity || !shipping){
-            return res.status(400).json({error:"All field are required"});
-        }
+        // if(!name || !description || !price || !category || !quantity || !shipping){
+        //     return res.status(400).json({error:"All field are required"});
+        // }
         let product = req.product;
         product = _.extend(product,fields);
         
@@ -217,7 +221,7 @@ exports.listSearch = (req,res) =>{
         }
         // fnd the product on query with  2 properties
         //search and categor 
-        console.log(query);
+        //console.log(query);
         Product.find(query, (err,products)=>{
             
             if(err){

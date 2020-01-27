@@ -33,7 +33,7 @@ const Home = () => {
     },[])
     return(
         
-        <Layout title="Home Page" description="Node React E-Commerce" className="container-fluid" >
+        <Layout title="Home Page" description="Node React E-Commerce Fullstack" className="container-fluid" >
             <Search />
             <h2 className="mb-4">Product New Arrival</h2>            
                 <div className="row">

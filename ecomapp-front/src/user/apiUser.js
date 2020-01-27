@@ -44,7 +44,7 @@ export const update = (userId,token,user) => {
 }
 export const getPurchaseHistory = (userId, token) => {
     
-    return fetch(`${API}/orders/by/user/${userId}`,{
+    return fetch(`${API}/order/by/user/${userId}`,{
         method:"GET",
         headers:{
             Accept:"application/json",

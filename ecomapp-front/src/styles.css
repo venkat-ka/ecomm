@@ -1,13 +1,27 @@
 /**
  * border radius
  */
-
+.notes{
+    font-size: 10px;
+    font-style: italic;
+}
  .btn,
  .jumbotron,
  .nav :hover {
      border-radius: 0px;
+     
  }
- 
+ .badge-pill{cursor: pointer;}
+ .footer {
+    color: #fff;
+    padding: 10px 0px;
+}
+.mrgb15{margin-bottom:15px}
+.mrgt15{margin-top:15px}
+.brd-dn{border-bottom: 1px solid #EEE;}
+.pdb5{padding-bottom: 5px;}
+.pdt15{padding-top: 15px;}
+.brd{border:1px solid #eee}
  /* cart badge */
  
  .cart-badge,
@@ -17,6 +31,7 @@
      font-size: 12px;
      font-style: italic;
      background: #000;
+    
  }
  /**
   * single product page - product name

@@ -21,14 +21,16 @@ const showItems = items => {
         <div>
             <h2>Your Cart has {`${items.length}`} items</h2>
             <hr />
+            
             {items.map((pr,i)=>(
             <Card 
                 key={i} 
                 product={pr} 
+                setRun={setRun}
                 showAddtoCartBtn={false}
                 cartUpdate={true}
                 showRemoveProductBtn={true}
-                setRun={setRun}
+                
                 run={run}
              />
                 

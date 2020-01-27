@@ -17,6 +17,7 @@ const categoryRoutes = require('./routes/category');
 const productRoutes = require('./routes/product');
 const brainTreeRoutes = require('./routes/braintree');
 const orderRoutes = require('./routes/order');
+const cms = require('./routes/cms');
 // app
 const app = express();
 
@@ -28,7 +29,8 @@ const app = express();
 mongoose.connect(process.env.DATABASE,{
     useNewUrlParser:true,
     useCreateIndex:true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify:false
 }).then(()=> console.log('DB connected'));
 
 //route middleware
@@ -44,6 +46,7 @@ app.use("/api",categoryRoutes);
 app.use("/api",productRoutes);
 app.use("/api",brainTreeRoutes);
 app.use("/api", orderRoutes);
+app.use("/api", cms);
 const port = process.env.PORT || 8000
 
 app.listen(port, ()=>{

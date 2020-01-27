@@ -150,3 +150,68 @@ export const updateProduct = (productId, userId, token,product) => {
         })
         .catch(error => console.log(error));
 };
+export const getCMS = (userId, token, cmsdata) => {
+    
+    return fetch(`${API}/cms/list/${userId}`,{
+        method:"GET",
+        headers:{
+            Accept:"application/json",
+            "Content-Type":"application/json",
+            Authorization : `Bearer ${token}`
+        },
+        body:JSON.stringify(cmsdata)
+    }).then(response => {
+        return response.json()
+    }).catch(err=>{
+        console.log(err)
+    })
+}
+export const createCMS = (userId, token, cmsdata) => {
+    
+    return fetch(`${API}/cms/create/${userId}`,{
+        method:"POST",
+        headers:{
+            Accept:"application/json",
+            "Content-Type":"application/json",
+            Authorization : `Bearer ${token}`
+        },
+        body:JSON.stringify(cmsdata)
+    }).then(response => {
+        return response.json()
+    }).catch(err=>{
+        console.log(err)
+    })
+}
+export const updateCMS = (userId, token,cmsData) => {
+    
+    return fetch(`${API}/cms/update/${cmsData.key}/${userId}`, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${token}`
+        },
+       body: JSON.stringify(cmsData)
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(error => console.log(error));
+};
+
+
+export const deleteCms = (cmsId, userId, token) => {
+    return fetch(`${API}/cms/${cmsId}/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+       
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(error => console.log(error));
+};

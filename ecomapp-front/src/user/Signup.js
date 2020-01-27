@@ -72,6 +72,6 @@ const Signup = () => {
         {signUpform()}
         
     </Layout>)
-}
+}                   
 export default Signup
  

@@ -62,7 +62,7 @@ class ListCMS extends Component {
     render(){
         let ListData = this.state.cmslist;
         if(this.props.List){
-         ListData = this.state.cmslist.concat(this.props.List)
+        let ListData = this.state.cmslist.concat(this.props.List)
         }
         return (<div>
             <div className="row brd d-flex justify-content-center align-item-center  mrgt15 pdt15">

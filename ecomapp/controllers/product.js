@@ -3,6 +3,8 @@ const formidable = require('formidable');
 const _ = require('lodash');
 const fs = require('fs');
 const {errorHandler} = require('../helpers/dbErrorHandler');
+const sendMail = require('sendmail');
+
 exports.productById = (req,res,next,id)=>{
     
    Product.findById(id)
@@ -17,6 +19,7 @@ exports.productById = (req,res,next,id)=>{
        next()
    })
 }
+
 exports.create = (req, res)=>{
     let form  = new formidable.IncomingForm();
     form.keepExtensions = true;

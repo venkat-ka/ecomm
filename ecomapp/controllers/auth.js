@@ -1,10 +1,16 @@
 const User = require('../models/user');
+const {userByEmail} = require('../controllers/user')
+const ResetPassword = require('../models/resetPassword');
 const {errorHandler} = require('../helpers/dbErrorHandler');
 const jwt = require('jsonwebtoken'); //to generate signed token
 const expressJwt = require('express-jwt'); // for authoriztion check
-
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const crypto = require('crypto');
+const moment = require('moment');
+const bcrypt = require('bcrypt');
+const sendMail = require('sendmail')
 exports.signup = (req,res)=>{
-    console.log('req.body',req.body)
+   
     const user = new User(req.body);
     user.save((err,user)=>{
         if(err){
@@ -17,6 +23,7 @@ exports.signup = (req,res)=>{
     //res.json({message:"Say Hi controller"});
 };
 exports.signin = (req,res)=>{
+    
     //find user based email
     const {email,password} = req.body;
     User.findOne({email},(err,user)=>{
@@ -40,6 +47,74 @@ exports.signin = (req,res)=>{
         //return response with user and token to frontend client
         const {_id, name, email, role} = user
         return res.json({token,user:{_id,email,name,role}});
+    })
+}
+exports.forgetpassword = (req,res)=>{
+
+   
+   
+    
+    const {email,password} = req.body;
+    
+    User.findOne({email}, function(err, user){
+        if(err||!user){
+            return res.status(400).json({
+                error:'Email Id does not exists'
+            })
+        }
+        const {userId} = user._id; 
+    // Code will take the UserId using User Email
+       // let userProfile =  userByEmail(email, '')
+     // Code will remove existing UserId in resetPasswordTable and newEntrie will set   
+        ResetPassword.findOne({
+
+            where: { userId : userId, status: 0 } 
+
+                            })
+                            .then(function(resetPassword){
+            if(resetPassword){
+                resetPassword.destroy({ where : { id: resetPassword.id } })
+            }
+        })
+        token = crypto.randomBytes(32).toString('hex')//creating the token to be sent to the forgot password form (react)
+        //https://meanstackdeveloper.in/implement-reset-password-functionality-in-node-js-express.html
+
+       
+        bcrypt.hash(token, 10, function (err, hash) {//hashing the password to store in the db node.js
+            
+            ResetPassword.create({
+                userId: userId,
+                resetPasswordToken: hash,
+                expire: moment.utc().add(15, 'seconds'),
+            }).then(function (item) {
+                if (!item)
+                    return res.json({error: 'Oops problem in creating new password record'})
+                let mailOptions = {
+                    from: '"<jyothi pitta>"venkat.k2516@gmail.com',
+                    to: user.email,
+                    subject: 'Reset your account password',
+                    html: '<h4><b>Reset Password</b></h4>' +
+                    '<p>To reset your password, complete this form:</p>' +
+                    '<a href=reset/' + user.id + '/' + token + '">reset/' + user.id + '/' + token + '</a>' +
+                    '<br><br>' +
+                    '<p>--Team</p>'
+                }
+                let mailSent = sendMail(mailOptions)//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
+                console.log(mailSent)
+                if (mailSent) {
+                    
+                    return res.status(200).json({ message: 'Check your mail to reset your password.'})
+                } else {
+                    
+                    return res.status(400).json({error: 'Unable to send email.'})
+                }
+            })
+              })
+        
+    // If Email Id Exists send the OTP to email with expir link withing 12 minutes
+     return res.status(200).json({
+            message:"Email Id Found"
+        })
     })
 }
 exports.signout = (req,res)=>{

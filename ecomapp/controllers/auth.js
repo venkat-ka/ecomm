@@ -90,7 +90,7 @@ exports.forgetpassword = (req,res)=>{
                 if (!item)
                     return res.json({error: 'Oops problem in creating new password record'})
                 let mailOptions = {
-                    from: '"<jyothi pitta>"venkat.k2516@gmail.com',
+                    from: '"<jyothi pitta>"demo@pickthings.in',
                     to: user.email,
                     subject: 'Reset your account password',
                     html: '<h4><b>Reset Password</b></h4>' +

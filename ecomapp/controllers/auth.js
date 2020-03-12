@@ -8,7 +8,10 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const crypto = require('crypto');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
-const sendMail = require('sendmail')
+// require on top
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey('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');
+
 exports.signup = (req,res)=>{
    
     const user = new User(req.body);
@@ -90,8 +93,8 @@ exports.forgetpassword = (req,res)=>{
                 if (!item)
                     return res.json({error: 'Oops problem in creating new password record'})
                 let mailOptions = {
-                    from: '"<jyothi pitta>"demo@pickthings.in',
                     to: "venkat.k2516@gmail.com",
+                    from: '"<jyothi pitta>"demo@pickthings.in',
                     subject: 'Reset your account password',
                     html: '<h4><b>Reset Password</b></h4>' +
                     '<p>To reset your password, complete this form:</p>' +
@@ -99,15 +102,9 @@ exports.forgetpassword = (req,res)=>{
                     '<br><br>' +
                     '<p>--Team</p>'
                 }
-                let mailSent = sendMail(mailOptions)//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
-                console.log(mailSent)
-                if (mailSent) {
-                    
-                    return res.status(200).json({ message: 'Check your mail to reset your password.'})
-                } else {
-                    
-                    return res.status(400).json({error: 'Unable to send email.'})
-                }
+                let mailSent = sgMail.send(mailOptions).then(sent => console.log('SENT >>>', sent))
+                .catch(err => console.log('ERR >>>', err));//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
+                
             })
               })
         

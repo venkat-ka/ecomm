@@ -10,7 +10,7 @@ const moment = require('moment');
 const bcrypt = require('bcrypt');
 // require on top
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
+sgMail.setApiKey('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');
 
 exports.signup = (req,res)=>{
    

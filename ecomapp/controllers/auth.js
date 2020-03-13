@@ -93,8 +93,8 @@ exports.forgetpassword = (req,res)=>{
                 if (!item)
                     return res.json({error: 'Oops problem in creating new password record'})
                 let mailOptions = {
-                    to: "venkat.k2516@gmail.com",
-                    from: '"<jyothi pitta>"demo@pickthings.in',
+                    to: user.email,
+                    from: '"<Pick Things>"demo@pickthings.in',
                     subject: 'Reset your account password',
                     html: '<h4><b>Reset Password</b></h4>' +
                     '<p>To reset your password, complete this form:</p>' +
@@ -102,7 +102,7 @@ exports.forgetpassword = (req,res)=>{
                     '<br><br>' +
                     '<p>--Team</p>'
                 }
-                let mailSent = sgMail.send(mailOptions).then(sent => console.log('SENT >>>', sent))
+                let mailSent = sgMail.send(mailOptions).then(sent => res.status().json({message:"Password Reset Link has been sent to your mail"}))
                 .catch(err => console.log('ERR >>>', err));//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
                 
             })

@@ -92,19 +92,24 @@ exports.forgetpassword = (req,res)=>{
             }).then(function (item) {
                 if (!item)
                     return res.json({error: 'Oops problem in creating new password record'})
-                let mailOptions = {
+               	   // console.log(user.email, 'vnnn');	
+                    let mailOptions = {
                     to: user.email,
-                    from: '"<Pick Things>"demo@pickthings.in',
-                    subject: 'Reset your account password',
+                    from: 'demo@pickthings.in',
+                    subject: 'Reset your pickthings account password',
                     html: '<h4><b>Reset Password</b></h4>' +
                     '<p>To reset your password, complete this form:</p>' +
-                    '<a href=reset/' + user.id + '/' + token + '">reset/' + user.id + '/' + token + '</a>' +
+   `<a href="www.pickthings.in/reset/${user._id}/${token}">Reset Password</a>` +
                     '<br><br>' +
                     '<p>--Team</p>'
                 }
-                let mailSent = sgMail.send(mailOptions).then(sent => res.status().json({message:"Password Reset Link has been sent to your mail"}))
-                .catch(err => console.log('ERR >>>', err));//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
-                
+                let mailSent = sgMail.send(mailOptions).then(sent => {
+
+//console.log('token <<<<', token);
+//console.log(user._id)
+}
+//res.status(200).json({message:"Password Reset Link has been sent to your mail"})
+) .catch(err => console.log('ERR >>>', err));//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link
             })
               })
         

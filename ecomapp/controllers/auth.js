@@ -99,7 +99,7 @@ exports.forgetpassword = (req,res)=>{
                     subject: 'Reset your pickthings account password',
                     html: '<h4><b>Reset Password</b></h4>' +
                     '<p>To reset your password, complete this form:</p>' +
-   `<a href="www.pickthings.in/reset/${user._id}/${token}">Reset Password</a>` +
+   `<a href="${process.env.SITE_URL}/reset/${user._id}/${token}">Reset Password</a>` +
                     '<br><br>' +
                     '<p>--Team</p>'
                 }

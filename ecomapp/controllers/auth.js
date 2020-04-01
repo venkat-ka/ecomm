@@ -167,10 +167,11 @@ exports.updateResetPassword = (req, res, next)=>{
                     }
                    
                   req.profile = user;  
+                  next()
                 })
             
             
-            next()
+           
         }
     }))
     

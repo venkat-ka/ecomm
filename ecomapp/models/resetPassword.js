@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const resetPasswordSchema = new mongoose.Schema({
     userId:{
-        type:Number
+        type:String
     },
     resetPasswordToken:{
         type:String,
@@ -18,7 +18,9 @@ const resetPasswordSchema = new mongoose.Schema({
     },
     status:{
         required:false,
-        type:Boolean
+        type:Number,
+        default:0,
+        enum:[0,1]
     }
 })
 

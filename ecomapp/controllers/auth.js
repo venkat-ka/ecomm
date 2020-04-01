@@ -52,12 +52,133 @@ exports.signin = (req,res)=>{
         return res.json({token,user:{_id,email,name,role}});
     })
 }
-exports.forgetpassword = (req,res)=>{
 
-   
-   
+passwordState = (id) =>{
     
-    const {email,password} = req.body;
+    ResetPassword.updateOne({_id : id},{ $set: {status: 1}}
+        ,(err, msg) => {
+        console.log(msg)
+        if(!msg){
+        
+        return err
+        }
+        else
+        
+        return "Password state successfully."
+        
+    });
+}
+
+// ValidateTheToken time by using
+exports.validateTheToken = (req, res, next)=>{
+// To check 
+
+// To check expire time
+ResetPassword.findOne({_id:req.body._id},(err, data)=>{
+    
+    const {expire, status} = data;
+    if(status==1){
+        console.log("Invalid Token or Token has been expires")
+        return res.status(400).json({error: "Invalid Token or Token has been expires" })
+    }
+    console.log(new Date().getTime()/1000, 'cdvc')
+    let expDate = new Date(expire).getTime()/1000;
+    let curDate = new Date().getTime()/1000;
+   
+    if(curDate > expDate){
+        console.log("Expire")
+        passwordState(req.body._id);
+        return res.status(400).json({error: "Token has been expired" })
+        // Here setState as 1
+    }
+    else{
+     console.log("Not Expire")
+     // Reset Password Store New Password
+
+
+     // Make An State of ResetPassword Table state as 1
+     //"5e689984be5d3a1c1fe4fc5b"
+     passwordState(req.body._id);
+     // Here store New Password
+     User.findOne({email:req.profile.email},(err,user)=>{
+         if(err){
+             res.status(401).json({ "error": "Email Id Does not Exists with this User Id"})
+         }
+        //const encryptPassword = user.encryptPassword(req.body.password);
+
+        if(!req.body.password){
+            return res.status(401).json({
+                error:'Invalid Password'
+            })
+        }
+        req.profile.password = req.body.password;
+        console.log(req, "vvvv pass")
+        next()
+        //return res.status(200).json({message: "Password Has been updated succesfully" })
+    })
+        
+    
+    
+     
+     
+    }
+ return res;
+ })
+
+}
+// Store Reset Passowrd
+exports.storeResetPassword = (req,res)=>{
+     // Message
+     User.findOneAndUpdate({_id:req.body.userId},{ $set:req.profile},(err,data)=>{
+             
+        if(err){
+            console.log(err)
+        }
+        if(data){
+            console.log(data, 'dddd data')
+        return res.status(200).json({message: "Password Has been updated succesfully" })
+       }
+    })
+}
+//Code recieve the form datas like token 
+exports.updateResetPassword = (req, res, next)=>{
+    
+    // Token Password
+    
+    ResetPassword.findOne({resetPasswordToken:req.body.token}, ((err, data)=>{
+        if(err || !data){
+            // data._id is resetpasword table id
+            console.log(err)
+            return res.status(400).json({error: "Invalid Token" })
+            
+        }
+       
+        if(data){
+            
+
+            req.body._id = data._id;
+            req.body.userId = data.userId
+            // User Email append to req
+            User.findOne({_id:data.userId}, function(err, user){
+                if(err||!user){
+                    return res.status(400).json({
+                        error:'User Id does not exists'
+                    })
+                    }
+                   
+                  req.profile = user;  
+                })
+            
+            
+            next()
+        }
+    }))
+    
+}
+// Sending Email Link To User
+exports.forgetpassword = (req,res)=>{
+ 
+    const {email} = req.body;
     
     User.findOne({email}, function(err, user){
         if(err||!user){
@@ -65,48 +186,53 @@ exports.forgetpassword = (req,res)=>{
                 error:'Email Id does not exists'
             })
         }
-        const {userId} = user._id; 
-    // Code will take the UserId using User Email
-       // let userProfile =  userByEmail(email, '')
-     // Code will remove existing UserId in resetPasswordTable and newEntrie will set   
-        ResetPassword.findOne({
+       
+        const userId = user._id;
 
-            where: { userId : userId, status: 0 } 
-
-                            })
-                            .then(function(resetPassword){
+     // Code will remove existing UserId in resetPasswordTable   
+        ResetPassword.findOne({ userId : userId }).exec((err, resetPassword)=>{
+                                
             if(resetPassword){
-                resetPassword.destroy({ where : { id: resetPassword.id } })
+              
+                ResetPassword.deleteMany({ userId:userId}, function(err, obj){
+                    if(err){
+                        console.log(err)
+                    }
+                } )
             }
         })
         token = crypto.randomBytes(32).toString('hex')//creating the token to be sent to the forgot password form (react)
         //https://meanstackdeveloper.in/implement-reset-password-functionality-in-node-js-express.html
 
        
-        bcrypt.hash(token, 10, function (err, hash) {//hashing the password to store in the db node.js
             
-            ResetPassword.create({
-                userId: userId,
-                resetPasswordToken: hash,
-                expire: moment.utc().add(15, 'seconds'),
-            }).then(function (item) {
-                if (!item)
-                    return res.json({error: 'Oops problem in creating new password record'})
-               	   // console.log(user.email, 'vnnn');	
-                    let mailOptions = {
-                    to: user.email,
-                    from: 'demo@pickthings.in',
-                    subject: 'Reset your pickthings account password',
-                    html: '<h4><b>Reset Password</b></h4>' +
-                    '<p>To reset your password, complete this form:</p>' +
-   `<a href="${process.env.SITE_URL}/reset/${user._id}/${token}">Reset Password</a>` +
-                    '<br><br>' +
-                    '<p>--Team</p>'
-                }
+        bcrypt.hash(token, 10, function (err, hash) {//hashing the password to store in the db node.js
+           
+        // Create New Entries
+        ResetPassword.create({
+            userId: userId,
+            resetPasswordToken: hash,
+            expire: moment.utc().add(4600, 'seconds'),
+            status:0
+        }).then(function (item) {
+            if (!item)
+                return res.json({error: 'Oops problem in creating new password record'})
+                // console.log(user.email, 'vnnn');	
+                let mailOptions = {
+                to: user.email,
+                from: 'demo@pickthings.in',
+                subject: 'Reset your pickthings account password',
+                html: '<h4><b>Reset Password</b></h4>' +
+                '<p>To reset your password, complete this form:</p>' +
+`<a href="https://${process.env.SITE_URL}/reset/${user._id}/${token}">Reset Your Password</a>` +
+                '<br><br>' +
+                '<p>--Team</p>'
+            }
+
                 let mailSent = sgMail.send(mailOptions).then(sent => {
 
-//console.log('token <<<<', token);
-//console.log(user._id)
+            //console.log('token <<<<', token);
+            //console.log(user._id)
 }
 //res.status(200).json({message:"Password Reset Link has been sent to your mail"})
 ) .catch(err => console.log('ERR >>>', err));//sending mail to the user where he can reset password.User id and the token generated are sent as params in a link

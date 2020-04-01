@@ -100,7 +100,7 @@ ResetPassword.findOne({_id:req.body._id},(err, data)=>{
      //"5e689984be5d3a1c1fe4fc5b"
      passwordState(req.body._id);
      // Here store New Password
-     User.findOne({email:req.profile.email},(err,user)=>{
+     User.findOne({email : req.profile.email},(err,user)=>{
          if(err){
              res.status(401).json({ "error": "Email Id Does not Exists with this User Id"})
          }
@@ -224,7 +224,7 @@ exports.forgetpassword = (req,res)=>{
                 subject: 'Reset your pickthings account password',
                 html: '<h4><b>Reset Password</b></h4>' +
                 '<p>To reset your password, complete this form:</p>' +
-`<a href="${process.env.SITE_URL}/reset/${user._id}/${token}">Reset Your Password</a>` +
+`<a href="${process.env.SITE_URL}/reset/${user._id}/${hash}">Reset Your Password</a>` +
                 '<br><br>' +
                 '<p>--Team</p>'
             }

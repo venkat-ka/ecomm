@@ -57,7 +57,7 @@ passwordState = (id) =>{
     
     ResetPassword.updateOne({_id : id},{ $set: {status: 1}}
         ,(err, msg) => {
-        console.log(msg)
+        
         if(!msg){
         
         return err
@@ -81,7 +81,7 @@ ResetPassword.findOne({_id:req.body._id},(err, data)=>{
         console.log("Invalid Token or Token has been expires")
         return res.status(400).json({error: "Invalid Token or Token has been expires" })
     }
-    console.log(new Date().getTime()/1000, 'cdvc')
+    
     let expDate = new Date(expire).getTime()/1000;
     let curDate = new Date().getTime()/1000;
    
@@ -112,7 +112,7 @@ ResetPassword.findOne({_id:req.body._id},(err, data)=>{
             })
         }
         req.profile.password = req.body.password;
-        console.log(req, "vvvv pass")
+        
         next()
         //return res.status(200).json({message: "Password Has been updated succesfully" })
     })
